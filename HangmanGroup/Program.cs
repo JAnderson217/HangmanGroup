@@ -19,7 +19,7 @@ namespace HangmanGroup
             int guesses = 0;
             while (guesses < 9 && !secretWord.Equals(currentWord))
             {
-                Console.WriteLine($"Word to guess is {secretWord}");
+                //Console.WriteLine($"Word to guess is {secretWord}");
                 Console.WriteLine($"Word to guess is {currentWord}");
                 Console.WriteLine("Enter a letter to guess!");
                 input = Console.ReadLine();
