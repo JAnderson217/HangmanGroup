@@ -17,7 +17,7 @@ namespace HangmanGroup
             string currentWord = new String('_', secretWord.Length);
             string input = "";
             int guesses = 0;
-            while (guesses < 6 && !secretWord.Equals(currentWord))
+            while (guesses < 9 && !secretWord.Equals(currentWord))
             {
                 Console.WriteLine($"Word to guess is {secretWord}");
                 Console.WriteLine($"Word to guess is {currentWord}");
@@ -68,17 +68,19 @@ namespace HangmanGroup
 
         static void drawHangman(int guesses)
         {
-            Console.WriteLine($"Lives remaining: {6-guesses}");
-            string[] Hangman = { "", 
-                                 "   \n   \n   \n   \n___|___\n",
-                                 "",
-                                 "",
-                                 "",
-                                 "",
-                                 ""};
-            //Console.WriteLine(Hangman[guesses]);
             //draw Hangman stick figure
+            Console.WriteLine($"Lives remaining: {9-guesses}");
+            string[] Hangman = new string[] { "",
+                "\n" + "\n | " + "\n | " + "\n | " + "\n | " + "\n | " + "\n |_______________________\n",
+                "\n___________________" + "\n|" + "\n|" + "\n|" + "\n|" + "\n|" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|" + "\n|" + "\n|" + "\n|" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|" + "\n|" + "\n|" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|                  |" + "\n|" + "\n|" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|               ---|" + "\n|" + "\n|" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|               ---|---" + "\n|" + "\n|" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|               ---|---" + "\n|                  /" + "\n|                 /" + "\n|_______________________\n",
+                "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|               ---|---" + "\n|                  /\\" + "\n|                 /  \\" + "\n|_______________________"};
+            Console.WriteLine(Hangman[guesses]);
         }
-
     }
 }
