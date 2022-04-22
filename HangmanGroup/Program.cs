@@ -19,12 +19,26 @@ namespace HangmanGroup
             int guesses = 0;
             while (guesses < 6 && !secretWord.Equals(currentWord))
             {
+                Console.WriteLine($"Word to guess is {secretWord}");
                 Console.WriteLine($"Word to guess is {currentWord}");
                 Console.WriteLine("Enter a letter to guess!");
                 input = Console.ReadLine();
                 if (checkGuess(secretWord, input))
                 {
+                    string tempString = "";
                     //replace _ with input at correct index 
+                    for (int i=0; i <secretWord.Length; i++)
+                    {
+                        if (secretWord[i].Equals(input[0]))
+                        {
+                            tempString += input[0];
+                        }
+                        else
+                        {
+                            tempString += currentWord[i];
+                        }
+                    }
+                    currentWord = tempString;
                 }
                 else
                 {
@@ -54,6 +68,15 @@ namespace HangmanGroup
 
         static void drawHangman(int guesses)
         {
+            Console.WriteLine($"Lives remaining: {6-guesses}");
+            string[] Hangman = { "", 
+                                 "   \n   \n   \n   \n___|___\n",
+                                 "",
+                                 "",
+                                 "",
+                                 "",
+                                 ""};
+            //Console.WriteLine(Hangman[guesses]);
             //draw Hangman stick figure
         }
 
