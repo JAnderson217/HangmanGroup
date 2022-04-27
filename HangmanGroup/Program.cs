@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -11,46 +9,32 @@ namespace HangmanGroup
     {
         private static string[] listOfWords = { "apple", "cat", "banana", "elephant", "football"
         , "tree", "dancer", "gymnast", "temperature", "wedding", "chimney", "zebra", "glass"};
-        private static string secretWord = "";
-        private static string currentWord;
-        private static string input = "";
-        private static int lives = 0;
-        private static List<string> guesses = new List<string>();
-
+        
         static void Main(string[] args)
         {
-            //gets the word to guess
-            getWord();
+            //Gets word to guess, and create new var with _ replacing each letter
+            string secretWord = getWord("");
+            string currentWord = new String('-', secretWord.Length);
+            //vars to store guess, list of guesses and lives used
+            List<string> guesses = new List<string>();
+            int lives = 0;
+            string input = "";
             //main game loop - keeps running until word guessed or 9 lives used
             while (lives < 9 && !secretWord.Equals(currentWord))
             {
-                //several methods that need to run in loop, getting users guess, checking guess
-                //printing status of game etc
+                //Main loop keeps running to play game, continually asks user for their guess
+                //checks guess, updates game status, prints relevant game info, hangman, lives, etc
                 Console.WriteLine();
-                Console.WriteLine($"Word to guess is {string.Join("", currentWord)}");
-                getGuess();
-                //print list of guesses
-                showGuesses();
+                Console.Write($"Word to guess is: ");
+                foreach(var letter in currentWord){ Console.Write(letter + " "); }
                 Console.WriteLine();
-                //checks guess from user, if user guessed a letter correctly, replace _ with letter
-                if (checkGuess(secretWord, input))
-                {
-                    string tempString = "";
-                    //replace _ with input at correct index 
-                    for (int i=0; i <secretWord.Length; i++)
-                    {
-                        if (secretWord[i].Equals(input[0]))
-                        {
-                            tempString += input[0];
-                        }
-                        else
-                        {
-                            tempString += currentWord[i];
-                        }
-                    }
-                    currentWord = tempString;
-                }
-                else
+                input = getGuess(input, secretWord, guesses);
+                showGuesses(guesses);
+                Console.WriteLine();
+                string tempWord = currentWord;
+                currentWord = checkGuess(secretWord, currentWord, input);
+                //if word is unchanged, means guess was incorrect so life is used
+                if (tempWord == currentWord)
                 {
                     lives++;
                 }
@@ -67,19 +51,32 @@ namespace HangmanGroup
             restart();
         }
 
-        static bool checkGuess(string a, string b)
+        static string checkGuess(string secretWord, string currentWord, string input)
         {
-            //method to check if users guess is correct, returns bool
-            if (a.Equals(b))
+            //Updates word if letter guess was correct, ends game if word guess was correct
+            if (secretWord.Equals(input))
             {
-                //ends game as word has been guessed
-                currentWord = secretWord;
+                //guessed entire word correctly, end game and main loop
+                return secretWord;
             }
-            else if (a.Contains(b) && b.Length == 1) 
-            { 
-                return true; 
+            else if (secretWord.Contains(input) && input.Length == 1)
+            {
+                string tempString = "";
+                //replace - with input at correct index 
+                for (int i = 0; i < secretWord.Length; i++)
+                {
+                    if (secretWord[i].Equals(input[0]))
+                    {
+                        tempString += input[0];
+                    }
+                    else
+                    {
+                        tempString += currentWord[i];
+                    }
+                }
+                currentWord = tempString;
             }
-            return false;
+            return currentWord;
         }
 
         static void drawHangman(int guesses)
@@ -97,13 +94,13 @@ namespace HangmanGroup
                 "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|               ---|---" + "\n|                  /" + "\n|                 /" + "\n|_______________________\n",
                 "\n___________________" + "\n|                  |" + "\n|                  O" + "\n|               ---|---" + "\n|                  /\\" + "\n|                 /  \\" + "\n|_______________________"};
             //cleaner to not print blank line if 0 lives lost
-            if (lives > 0)
+            if (guesses > 0)
             {
                 Console.WriteLine(Hangman[guesses]);
             }
         }
 
-        static void getWord()
+        static string getWord(string secretWord)
         {
             //gets word to guess, either randomly from listOfWords or array or from a dictionary.txt
             while (secretWord.Equals(""))
@@ -115,30 +112,27 @@ namespace HangmanGroup
                 if (option.Equals("1"))
                 {
                     secretWord = listOfWords[random.Next(listOfWords.Length)].ToLower();
-                    //currentWord as secretWord but all _
-                    currentWord = new String('_', secretWord.Length);
                 }
                 else if (option.Equals("2"))
                 {
-                    //reads all words from dictionary.txt, generates a random word
+                    //reads all words from dictionary.txt to array, gets a random word
                     string[] lines = System.IO.File.ReadAllLines("dictionary.txt");
                     secretWord = lines[random.Next(lines.Length)].ToLower();
-                    currentWord = new String('_', secretWord.Length);
                 }
                 else
                 {
                     Console.WriteLine("Invalid input, must enter 1 or 2");
                 }
             }
+            return secretWord;
         }
 
-        static void getGuess()
+        static string getGuess(string input, string secretWord, List<string> guesses)
         {
             input = "";
             while (input.Equals(""))
             {
                 Console.WriteLine("Enter a word or letter to guess:");
-                //if letter word is valid a/z and not already guessed, then is valid guess
                 input = Console.ReadLine().ToLower();
                 //valid guess has to be a-z, not used before, and one letter or word of correct length
                 if (Regex.IsMatch(input, "[a-z]", RegexOptions.IgnoreCase) && !guesses.Contains(input)
@@ -149,6 +143,7 @@ namespace HangmanGroup
                 else if (guesses.Contains(input))
                 {
                     Console.WriteLine("Already guessed!");
+                    input = "";
                 }
                 else 
                 {
@@ -156,6 +151,7 @@ namespace HangmanGroup
                     input = "";
                 }
             }
+            return input;
         }
         
         static void restart()
@@ -163,11 +159,6 @@ namespace HangmanGroup
             Console.WriteLine("Enter y to play again, anything else to quit");
             if (Console.ReadLine().ToLower().Equals("y"))
             {
-                //reset all vars, run main again
-                input = "";
-                lives = 0;
-                guesses.Clear();
-                secretWord = "";
                 Main(new string[] { });
             }
             else
@@ -176,10 +167,10 @@ namespace HangmanGroup
             }
         }
 
-        static void showGuesses()
+        static void showGuesses(List<string> guesses)
         {
             Console.WriteLine("Guesses: ");
-            foreach (var g in guesses)
+            foreach (string g in guesses)
             {
                 Console.Write(g + " ");
             }
