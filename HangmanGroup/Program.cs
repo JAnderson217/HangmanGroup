@@ -9,15 +9,16 @@ namespace HangmanGroup
     {
         private static string[] listOfWords = { "apple", "cat", "banana", "elephant", "football"
         , "tree", "dancer", "gymnast", "temperature", "wedding", "chimney", "zebra", "glass"};
-        
+
+        private static int lives;
         static void Main(string[] args)
         {
-            //Gets word to guess, and create new var with _ replacing each letter
+            //Gets word to guess, and create new var with - replacing each letter
             string secretWord = getWord("");
             string currentWord = new String('-', secretWord.Length);
             //vars to store guess, list of guesses and lives used
             List<string> guesses = new List<string>();
-            int lives = 0;
+            lives = 0;
             string input = "";
             //main game loop - keeps running until word guessed or 9 lives used
             while (lives < 9 && !secretWord.Equals(currentWord))
@@ -31,13 +32,7 @@ namespace HangmanGroup
                 input = getGuess(input, secretWord, guesses);
                 showGuesses(guesses);
                 Console.WriteLine();
-                string tempWord = currentWord;
                 currentWord = checkGuess(secretWord, currentWord, input);
-                //if word is unchanged, means guess was incorrect so life is used
-                if (tempWord == currentWord)
-                {
-                    lives++;
-                }
                 drawHangman(lives);
             }
             if (secretWord.Equals(currentWord))
@@ -76,6 +71,7 @@ namespace HangmanGroup
                 }
                 currentWord = tempString;
             }
+            else { lives++; }
             return currentWord;
         }
 
