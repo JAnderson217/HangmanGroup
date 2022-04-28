@@ -26,9 +26,7 @@ namespace HangmanGroup
                 //Main loop keeps running to play game, continually asks user for their guess
                 //checks guess, updates game status, prints relevant game info, hangman, lives, etc
                 Console.WriteLine();
-                Console.Write($"Word to guess is: ");
-                foreach(var letter in currentWord){ Console.Write(letter + " "); }
-                Console.WriteLine();
+                Console.WriteLine($"Word to guess is: {currentWord}");
                 input = getGuess(input, secretWord, guesses);
                 showGuesses(guesses);
                 Console.WriteLine();
